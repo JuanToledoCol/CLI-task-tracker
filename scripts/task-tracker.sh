@@ -36,7 +36,7 @@ if [[ "$#" -gt 0 ]]; then
 
       case "$2" in
       -t | -i | -d)
-        getTodoTasks "$2"
+        getTasksFilter "$2"
         exit 0
         ;;
       *)

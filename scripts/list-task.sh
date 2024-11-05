@@ -21,7 +21,7 @@ getAllTasks() {
   echo ""
 }
 
-getTodoTasks() {
+getTasksFilter() {
   case "$1" in
   -t)
     listFilter=$(jq '[.[] | select(.status == "todo")]' $FILE_JSON)
