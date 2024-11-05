@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "description": "Buy coca-cola",
+    "status": "todo",
+    "createdAt": 1698835200,
+    "updateAt": 1698842400
+  },
+  {
+    "id": 2,
+    "description": "Read a book",
+    "status": "in-progress",
+    "createdAt": 1698910800,
+    "updateAt": 1698914400
+  },
+  {
+    "id": 3,
+    "description": "Complete project report",
+    "status": "done",
+    "createdAt": 1698997200,
+    "updateAt": 1699000800
+  },
+  {
+    "id": 4,
+    "description": "Go for a run",
+    "status": "todo",
+    "createdAt": 1699083600,
+    "updateAt": 1699090800
+  },
+  {
+    "id": 5,
+    "description": "Grocery shopping",
+    "status": "in-progress",
+    "createdAt": 1699170000,
+    "updateAt": 1699177200
+  },
+  {
+    "id": 6,
+    "description": "Visit the dentist",
+    "status": "done",
+    "createdAt": 1699256400,
+    "updateAt": 1699260000
+  }
+]
