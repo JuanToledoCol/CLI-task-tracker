@@ -29,31 +29,31 @@ if [[ "$#" -gt 0 ]]; then
   case "$1" in
   -ct | --create-task)
     shift
-    state=""
+    status=""
     description=""
 
     while [[ "$#" -gt 0 ]]; do
       case "$1" in
       -t)
-        if [[ -n "$state" ]]; then
-          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
           exit 1
         fi
-        state="todo"
+        status="todo"
         ;;
       -i)
-        if [[ -n "$state" ]]; then
-          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
           exit 1
         fi
-        state="in-progress"
+        status="in-progress"
         ;;
       -d)
-        if [[ -n "$state" ]]; then
-          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
           exit 1
         fi
-        state="done"
+        status="done"
         ;;
       -D | --description)
         shift
@@ -68,8 +68,8 @@ if [[ "$#" -gt 0 ]]; then
       shift
     done
 
-    if [[ -z "$state" ]]; then
-      state="todo"
+    if [[ -z "$status" ]]; then
+      status="todo"
     fi
 
     if [[ -z "$description" ]]; then
@@ -77,7 +77,71 @@ if [[ "$#" -gt 0 ]]; then
       exit 1
     fi
 
-    createTask "$state" "$description"
+    createTask "$status" "$description"
+    exit 0
+    ;;
+
+  -ut | --update-task)
+    shift
+    id=""
+    status=""
+    description=""
+
+    while [[ "$#" -gt 0 ]]; do
+      case "$1" in
+      -t)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="todo"
+        ;;
+      -i)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="in-progress"
+        ;;
+      -d)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="done"
+        ;;
+      -D | --description)
+        shift
+        description="$1"
+        ;;
+      -id)
+        shift
+        id="$1"
+        ;;
+      *)
+        echo "Invalid option: $1"
+        showHelp
+        exit 1
+        ;;
+      esac
+      shift
+    done
+
+    if [[ -z "$id" ]]; then
+      echo "Error: No id task provided. Use -id followed by id task."
+      exit 1
+    fi
+
+    if [[ -z "$status" && -z "$description" ]]; then
+      echo "Error: No status or description task provided."
+      echo ""
+      echo "      Use -t, -i, or -d for specified the update status"
+      echo "        OR"
+      echo "      Use -D or --description followed by the task description."
+      exit 1
+    fi
+
+    updateTask "$id" "$status" "$description"
     exit 0
     ;;
 

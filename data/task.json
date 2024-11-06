@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "description": "Buy coca-cola",
-    "status": "todo",
+    "description": "Cambio de desc 2",
+    "status": "done",
     "createdAt": 1698835200,
     "updateAt": 1698842400
   },
@@ -43,16 +43,9 @@
   },
   {
     "id": 7,
-    "description": "Test de prueba",
-    "status": "done",
-    "createdAt": 1730856684,
-    "updateAt": 1730856684
-  },
-  {
-    "id": 8,
     "description": "Test con salida",
-    "status": "done",
-    "createdAt": 1730856820,
-    "updateAt": 1730856820
+    "status": "todo",
+    "createdAt": 1730915763,
+    "updateAt": 1730915763
   }
 ]

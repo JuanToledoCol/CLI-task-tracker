@@ -18,8 +18,50 @@ createTask() {
   echo ""
   printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "ID" "Description" "Status" "Created At" "Updated At"
   printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
-  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "$id" "$2" "$1" "$createdAt" "$updateAt"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "$id" "$2" "$1" "$(convertDateUnixToYMDHMS $createdAt)" "$(convertDateUnixToYMDHMS $updateAt)"
   printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
+}
+
+updateTask() {
+  if [[ -n "$2" && -z "$3" ]]; then
+    jq --argjson id "$1" --arg status "$2" \
+      '(.[] | select(.id == $id) | .status) = $status' \
+      "$FILE_JSON" >temp.json && mv temp.json "$FILE_JSON"
+
+  elif [[ -z "$2" && -n "$3" ]]; then
+    jq --argjson id "$1" --arg description "$3" \
+      '(.[] | select(.id == $id) | .description) = $description' \
+      "$FILE_JSON" >temp.json && mv temp.json "$FILE_JSON"
+
+  elif [[ -n "$2" && -n "$3" ]]; then
+    jq --argjson id "$1" \
+      --arg status "$2" \
+      --arg description "$3" \
+      '(.[] | select(.id == $id)) |= (.status = $status | .description = $description)' \
+      "$FILE_JSON" >temp.json && mv temp.json "$FILE_JSON"
+  else
+    echo "No valid parameters provided for update."
+    exit 1
+  fi
+
+  taskUpdated=$(jq ".[] | select(.id == $1)" $FILE_JSON)
+
+  echo ""
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "ID" "Description" "Status" "Created At" "Updated At"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
+
+  id=$(echo $taskUpdated | jq ".id")
+  description=$(echo $taskUpdated | jq ".description")
+  status=$(echo $taskUpdated | jq ".status")
+  createdAt=$(echo $taskUpdated | jq ".createdAt")
+  updateAt=$(echo $taskUpdated | jq ".updateAt")
+
+  createdAt=$(convertDateUnixToYMDHMS $createdAt)
+  updateAt=$(convertDateUnixToYMDHMS $updateAt)
+
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "$id" "$description" "$status" "$createdAt" "$updateAt"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
+  echo ""
 }
 
 getAllTasks() {
