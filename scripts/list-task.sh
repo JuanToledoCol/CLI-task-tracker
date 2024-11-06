@@ -1,5 +1,27 @@
 #!/bin/bash
 
+createTask() {
+  id=$(jq '.[-1].id' $FILE_JSON)
+  id=$(($id + 1))
+  createdAt=$(date +%s)
+  updateAt=$(date +%s)
+
+  jq --argjson id "$id" \
+    --arg description "$2" \
+    --arg status "$1" \
+    --argjson createdAt "$createdAt" \
+    --argjson updateAt "$updateAt" \
+    '. += [{"id": $id, "description": $description, "status": $status, "createdAt": $createdAt, "updateAt": $updateAt}]' \
+    "$FILE_JSON" >temp.json && mv temp.json "$FILE_JSON"
+
+  echo "Task added successfully:"
+  echo ""
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "ID" "Description" "Status" "Created At" "Updated At"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "$id" "$2" "$1" "$createdAt" "$updateAt"
+  printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
+}
+
 getAllTasks() {
   length_json=$(jq '. | length' $FILE_JSON)
 

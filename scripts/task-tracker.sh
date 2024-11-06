@@ -7,6 +7,7 @@ showHelp() {
   echo ""
   echo "Available flags:"
   echo ""
+  echo "    -ct, --create-task       Create a task by default with status 'todo'"
   echo "    -gt, --get-tasks         Show all tasks saved in task.json."
   echo "                              You can add other flags like -d, -i, or -t to filter the response."
   echo "                              Example: $0 -gt -d  <- filter tasks with status 'done'."
@@ -26,12 +27,61 @@ showHelp() {
 if [[ "$#" -gt 0 ]]; then
 
   case "$1" in
-  -h | --help)
-    showHelp
+  -ct | --create-task)
+    shift
+    state=""
+    description=""
+
+    while [[ "$#" -gt 0 ]]; do
+      case "$1" in
+      -t)
+        if [[ -n "$state" ]]; then
+          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        state="todo"
+        ;;
+      -i)
+        if [[ -n "$state" ]]; then
+          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        state="in-progress"
+        ;;
+      -d)
+        if [[ -n "$state" ]]; then
+          echo "Error: Only one task state (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        state="done"
+        ;;
+      -D | --description)
+        shift
+        description="$1"
+        ;;
+      *)
+        echo "Invalid option: $1"
+        showHelp
+        exit 1
+        ;;
+      esac
+      shift
+    done
+
+    if [[ -z "$state" ]]; then
+      state="todo"
+    fi
+
+    if [[ -z "$description" ]]; then
+      echo "Error: No task description provided. Use -D or --description followed by the task description."
+      exit 1
+    fi
+
+    createTask "$state" "$description"
     exit 0
     ;;
-  -gt | --get-tasks)
 
+  -gt | --get-tasks)
     if [[ "$#" -gt 1 ]]; then
 
       case "$2" in
@@ -50,8 +100,11 @@ if [[ "$#" -gt 0 ]]; then
     fi
     ;;
 
+  -h | --help)
+    showHelp
+    exit 0
+    ;;
   *)
-
     echo "Invalid option: $1"
     showHelp
     exit 1
