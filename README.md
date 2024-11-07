@@ -4,52 +4,101 @@ Sample solution for the task-tracker challenge from [roadmap.sh](https://roadmap
 
 ---
 
-## How to run
+## How to Run
 
-Clone the repository and run the following command:
+This script is currently tested and verified only on Linux Debian 12.
 
-```bash
-git clone 
-cd 
-```
+To install and run the project, clone the repository and follow the steps below:
 
-Run the following command to build and run the project:
+1. **Clone the Repository:**
 
-```bash
+    ```bash
+    git clone https://github.com/JuanToledoCol/CLI-task-tracker.git
+    cd CLI-task-tracker
+    ```
 
-```
+2. **Make the Script Accessible from Anywhere:**
 
-### To add a task
+    If you want to be able to run the script from any location, you need to add its path to your system’s PATH. You can do this by adding the following line to your `.bashrc` or `.zshrc` file:
 
-```bash
-./task-tracker add "Buy groceries"
-```
+    ```bash
+    export PATH="$PATH:$(/path/of/folder/with/task/Tracker)"
+    ```
 
-### To update a task
+    Then reload your shell configuration:
 
-```bash
-./task-tracker update 1 "Buy groceries and cook dinner"
-```
+    ```bash
+    source ~/.bashrc    # for Bash users
+    source ~/.zshrc     # for Zsh users
+    ```
 
-### To delete a task
+---
 
-```bash
-./task-tracker delete 1
-```
+## Usage
 
-### To mark a task as in progress/done/todo
+### Add a Task
 
-```bash
-./task-tracker mark-in-progress 1
-./task-tracker mark-done 1
-./task-tracker mark-todo 1
-```
-
-### To list all tasks
+To add a new task with a specified status and description:
 
 ```bash
-./task-tracker list
-./task-tracker list done
-./task-tracker list todo
-./task-tracker list in-progress
+task-tracker create -t -D "Buy groceries"
 ```
+
+Options:
+
+- `-t` for `todo` status (default).
+- `-i` for `in-progress` status.
+- `-d` for `done` status.
+- `-D` or `--description` followed by the task description (required).
+
+### Update a Task
+
+To update an existing task’s status and/or description:
+
+```bash
+task-tracker update -id 6 -i -D "Visit the dentist on Friday"
+```
+
+Options:
+
+- `-id` followed by the task ID (required).
+- `-D` or `--description` followed by the task description (optional).
+- `-t` for change status to `todo`.
+- `-i` for change status to `in-progress`.
+- `-d` for change status to `done`.
+
+### Delete a Task
+
+To delete an existing task by its ID:
+
+```bash
+task-tracker delete -id 6
+```
+Option:
+
+- `-id` followed by the task ID (required).
+
+### List All Task
+
+To list all tasks, or filter them by status:
+
+```bash
+task-tracker list            # List all task
+task-tracker list -t         # List tasks with status 'todo'
+task-tracker list -i         # List tasks with status 'in-progress'
+task-tracker list -d         # List tasks with status 'done'
+```
+
+### Help
+
+To view a help message with all available commands and options:
+
+```bash
+task-tracker -h
+```
+
+---
+
+## Thank You!
+If you found this project helpful, please consider giving it a ⭐ on [GitHub](https://github.com/JuanToledoCol/CLI-task-tracker.git).
+Your support motivates me and helps me know that I'm on the right track. Thank you!

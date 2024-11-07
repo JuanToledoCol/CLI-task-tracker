@@ -1,4 +1,51 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FILE_JSON="$SCRIPT_DIR/../data/task.json"
+
+showHelp() {
+  echo "Usage: $0 <command> [options]"
+  echo ""
+  echo "Commands:"
+  echo "  create         Create a new task with a specified status and description."
+  echo "                 Options:"
+  echo "                   -t                   Set task status to 'todo'."
+  echo "                   -i                   Set task status to 'in-progress'."
+  echo "                   -d                   Set task status to 'done'."
+  echo "                   -D, --description    Set the task description (required)."
+  echo ""
+  echo "                 Example:"
+  echo "                   $0 create -t -D 'Finish project report'"
+  echo ""
+  echo "  update         Update an existing task's status and/or description."
+  echo "                 Options:"
+  echo "                   -id <task_id>        Specify the ID of the task to update (required)."
+  echo "                   -t                   Set task status to 'todo'."
+  echo "                   -i                   Set task status to 'in-progress'."
+  echo "                   -d                   Set task status to 'done'."
+  echo "                   -D, --description    Update the task description."
+  echo ""
+  echo "                 Example:"
+  echo "                   $0 update -id 6 -t -D 'Visit the dentist on Friday'"
+  echo ""
+  echo "  delete         Delete an existing task by its ID."
+  echo "                 Options:"
+  echo "                   -id <task_id>        Specify the ID of the task to delete (required)."
+  echo ""
+  echo "                 Example:"
+  echo "                   $0 delete -id 6"
+  echo ""
+  echo "  list           List tasks with optional status filters."
+  echo "                 Options:"
+  echo "                   -t                   List tasks with status 'todo'."
+  echo "                   -i                   List tasks with status 'in-progress'."
+  echo "                   -d                   List tasks with status 'done'."
+  echo ""
+  echo "                 Examples:"
+  echo "                   $0 list              List all tasks."
+  echo "                   $0 list -t           List tasks with status 'todo'."
+  echo ""
+  echo "  -h, --help     Show this help message."
+}
 
 createTask() {
   id=$(jq '.[-1].id' $FILE_JSON)
@@ -86,7 +133,6 @@ deleteTask() {
 getAllTasks() {
   length_json=$(jq '. | length' $FILE_JSON)
 
-  # Print all task
   echo ""
   printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "ID" "Description" "Status" "Created At" "Updated At"
   printf "| %-3s | %-50s | %-13s | %-19s | %-19s |\n" "---" "--------------------------------------------------" "-------------" "-------------------" "-------------------"
@@ -107,7 +153,6 @@ getAllTasks() {
   echo ""
 }
 
-#Method for filter task by todo, in-progress or done
 getTasksFilter() {
   case "$1" in
   -t)
@@ -150,3 +195,175 @@ getTasksFilter() {
 convertDateUnixToYMDHMS() {
   date -d "@$1" +"%Y-%m-%d %H:%M:%S"
 }
+
+# Menu
+if [[ "$#" -gt 0 ]]; then
+
+  case "$1" in
+  create)
+    shift
+    status=""
+    description=""
+
+    while [[ "$#" -gt 0 ]]; do
+      case "$1" in
+      -t)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="todo"
+        ;;
+      -i)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="in-progress"
+        ;;
+      -d)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="done"
+        ;;
+      -D | --description)
+        shift
+        description="$1"
+        ;;
+      *)
+        echo "Invalid option: $1"
+        showHelp
+        exit 1
+        ;;
+      esac
+      shift
+    done
+
+    if [[ -z "$status" ]]; then
+      status="todo"
+    fi
+
+    if [[ -z "$description" ]]; then
+      echo "Error: No task description provided. Use -D or --description followed by the task description."
+      exit 1
+    fi
+
+    createTask "$status" "$description"
+    exit 0
+    ;;
+
+  update)
+    shift
+    id=""
+    status=""
+    description=""
+
+    while [[ "$#" -gt 0 ]]; do
+      case "$1" in
+      -t)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="todo"
+        ;;
+      -i)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="in-progress"
+        ;;
+      -d)
+        if [[ -n "$status" ]]; then
+          echo "Error: Only one task status (-t, -i, or -d) can be specified."
+          exit 1
+        fi
+        status="done"
+        ;;
+      -D | --description)
+        shift
+        description="$1"
+        ;;
+      -id)
+        shift
+        id="$1"
+        ;;
+      *)
+        echo "Invalid option: $1"
+        showHelp
+        exit 1
+        ;;
+      esac
+      shift
+    done
+
+    if [[ -z "$id" ]]; then
+      echo "Error: No id task provided. Use -id followed by id task."
+      exit 1
+    fi
+
+    if [[ -z "$status" && -z "$description" ]]; then
+      echo "Error: No status or description task provided."
+      echo ""
+      echo "      Use -t, -i, or -d for specified the update status"
+      echo "        OR"
+      echo "      Use -D or --description followed by the task description."
+      exit 1
+    fi
+
+    updateTask "$id" "$status" "$description"
+    exit 0
+    ;;
+
+  delete)
+    case "$2" in
+    -id)
+      shift
+      deleteTask $2
+      ;;
+    *)
+      echo "Error: No id task provided."
+      echo ""
+      echo "      Use -id for specified the id task"
+      ;;
+    esac
+    ;;
+
+  list)
+    if [[ "$#" -gt 1 ]]; then
+
+      case "$2" in
+      -t | -i | -d)
+        getTasksFilter "$2"
+        exit 0
+        ;;
+      *)
+        echo "Invalid filter option: $2"
+        showHelp
+        exit 1
+        ;;
+      esac
+    else
+      getAllTasks
+    fi
+    ;;
+
+  -h | --help)
+    showHelp
+    exit 0
+    ;;
+  *)
+    echo "Invalid option: $1"
+    showHelp
+    exit 1
+    ;;
+  esac
+
+else
+  echo "No options provided."
+  showHelp
+  exit 1
+fi
