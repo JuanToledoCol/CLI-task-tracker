@@ -2,16 +2,9 @@
   {
     "id": 1,
     "description": "Cambio de desc 2",
-    "status": "done",
+    "status": "todo",
     "createdAt": 1698835200,
     "updateAt": 1698842400
-  },
-  {
-    "id": 2,
-    "description": "Read a book",
-    "status": "in-progress",
-    "createdAt": 1698910800,
-    "updateAt": 1698914400
   },
   {
     "id": 3,
@@ -33,19 +26,5 @@
     "status": "in-progress",
     "createdAt": 1699170000,
     "updateAt": 1699177200
-  },
-  {
-    "id": 6,
-    "description": "Visit the dentist",
-    "status": "done",
-    "createdAt": 1699256400,
-    "updateAt": 1699260000
-  },
-  {
-    "id": 7,
-    "description": "Test con salida",
-    "status": "todo",
-    "createdAt": 1730915763,
-    "updateAt": 1730915763
   }
 ]
