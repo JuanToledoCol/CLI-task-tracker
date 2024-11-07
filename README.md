@@ -14,7 +14,7 @@ To install and run the project, clone the repository and follow the steps below:
 
     ```bash
     git clone https://github.com/JuanToledoCol/CLI-task-tracker.git
-    cd CLI-task-tracker
+    cd CLI-task-tracker/bin
     ```
 
 2. **Make the Script Accessible from Anywhere:**
@@ -31,7 +31,13 @@ To install and run the project, clone the repository and follow the steps below:
     source ~/.bashrc    # for Bash users
     source ~/.zshrc     # for Zsh users
     ```
+3. **Make the Script Executable:**
 
+   Before running the script, you'll need to make it executable. Run the following command:
+
+    ```bash
+    chmod +x bin/task-tracker
+    ```
 ---
 
 ## Usage
