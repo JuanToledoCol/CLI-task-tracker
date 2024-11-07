@@ -22,7 +22,7 @@ To install and run the project, clone the repository and follow the steps below:
     If you want to be able to run the script from any location, you need to add its path to your system’s PATH. You can do this by adding the following line to your `.bashrc` or `.zshrc` file:
 
     ```bash
-    export PATH="$PATH:$(/path/of/folder/with/task/Tracker)"
+    export PATH="$PATH:/path/of/folder/with/task/Tracker"
     ```
 
     Then reload your shell configuration:
